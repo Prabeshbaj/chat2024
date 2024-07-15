@@ -1,42 +1,36 @@
-.sidebar-container {
+.container {
     display: flex;
     height: 100vh;
-    position: relative; /* Ensure the position is relative to allow absolute positioning of the topics-container */
   }
   
-  .sidebar {
+  .mainLabel {
     width: 200px;
     background-color: #f4f4f4;
     padding: 10px;
     overflow-y: auto;
   }
   
-  .topics-container {
+  .subLabel {
     background-color: #fff;
     border-left: 1px solid #ddd;
     padding: 10px;
     overflow-y: auto;
+    flex: 1; /* Ensures the subLabel div takes up the remaining space */
   }
   
   .topic {
     margin-bottom: 10px;
   }
   
-  .label {
+  .label, .recent, .pinned {
     cursor: pointer;
   }
   
-  .label:hover {
+  .label:hover, .recent:hover, .pinned:hover {
     background-color: #ddd;
   }
   
-  .recent,
-  .pinned {
-    cursor: pointer;
-  }
-  
-  .recent:hover,
-  .pinned:hover {
-    background-color: #ddd;
+  button {
+    margin-bottom: 10px;
   }
   

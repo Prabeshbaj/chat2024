@@ -29,28 +29,32 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
 
   const handleLabelClick = (label: string) => {
     dispatch(selectLabel(label));
+    setShowRecent(false);
+    setShowPinned(false);
   };
 
   const handleClose = () => {
     dispatch(deselectLabel());
+    setShowRecent(false);
+    setShowPinned(false);
   };
 
   const toggleRecent = () => {
     setShowRecent(!showRecent);
     setShowPinned(false); // Ensure Pinned is not shown when Recent is clicked
-    handleClose();
+    dispatch(deselectLabel());
   };
 
   const togglePinned = () => {
     setShowPinned(!showPinned);
     setShowRecent(false); // Ensure Recent is not shown when Pinned is clicked
-    handleClose();
+    dispatch(deselectLabel());
   };
 
   return (
-    <div className="sidebar-container">
-      <div className="sidebar">
-        <h2>Labels</h2>
+    <div className="container">
+      <div className="mainLabel">
+        <h2>Options</h2>
         {status === 'loading' && <div>Loading...</div>}
         {status === 'failed' && <div>{error}</div>}
         <div className="recent" onClick={toggleRecent}>
@@ -66,11 +70,11 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
         ))}
       </div>
       {(showRecent || showPinned || selectedLabel) && (
-        <div className="topics-container" style={{ width: '300px', height: '100%', position: 'absolute', right: 0, top: 0 }}>
+        <div className="subLabel" style={{ width: '300px', height: '100%', position: 'absolute', right: 0, top: 0 }}>
           <button onClick={handleClose}>Close</button>
           {showRecent && (
             <>
-              <h3>Recent</h3>
+              <h3>Recent Topics</h3>
               {recentTopics.map((topic) => (
                 <div key={topic.requestId} className="topic">
                   {topic.label}: {topic.topic}
@@ -80,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
           )}
           {showPinned && (
             <>
-              <h3>Pinned</h3>
+              <h3>Pinned Topics</h3>
               {pinnedTopics.map((topic) => (
                 <div key={topic.requestId} className="topic">
                   {topic.label}: {topic.topic}
@@ -88,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
               ))}
             </>
           )}
-          {selectedLabel && (
+          {selectedLabel && !showRecent && !showPinned && (
             <>
               <h3>{selectedLabel}</h3>
               {topics[selectedLabel] &&
