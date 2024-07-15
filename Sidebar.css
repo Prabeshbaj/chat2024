@@ -1,6 +1,7 @@
 .sidebar-container {
     display: flex;
     height: 100vh;
+    position: relative; /* Ensure the position is relative to allow absolute positioning of the topics-container */
   }
   
   .sidebar {
@@ -26,6 +27,16 @@
   }
   
   .label:hover {
+    background-color: #ddd;
+  }
+  
+  .recent,
+  .pinned {
+    cursor: pointer;
+  }
+  
+  .recent:hover,
+  .pinned:hover {
     background-color: #ddd;
   }
   
