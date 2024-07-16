@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from './store'; // Adjust the import according to your store setup
 import { fetchLabels, fetchTopics, selectLabel, deselectLabel, createLabel, selectRadioButton, setCurrentRequestID } from './sidebarSlice';
@@ -26,6 +26,9 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleMenu, setVisibleMenu] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState<{ top: number, left: number } | null>(null);
+
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (status === 'idle') {
@@ -33,6 +36,19 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
       dispatch(fetchTopics(crewId));
     }
   }, [status, dispatch, crewId]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        setVisibleMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [sidebarRef]);
 
   const handleLabelClick = (label: string) => {
     if (currentLabel === label) {
@@ -92,12 +108,29 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
     dispatch(setCurrentRequestID(requestId));
   };
 
-  const toggleMenu = (requestId: string) => {
+  const toggleMenu = (event: React.MouseEvent<HTMLSpanElement>, requestId: string) => {
     if (visibleMenu === requestId) {
       setVisibleMenu(null);
+      setMenuPosition(null);
     } else {
       setVisibleMenu(requestId);
+      const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+      const parentRect = sidebarRef.current?.getBoundingClientRect();
+      const parentLeft = parentRect ? parentRect.left : 0;
+      const parentRight = parentRect ? parentRect.right : window.innerWidth;
+
+      let left = rect.left + window.scrollX;
+      if (left + 150 > parentRight) {
+        left = parentRight - 150;
+      }
+
+      setMenuPosition({ top: rect.top + window.scrollY, left: Math.max(left, parentLeft) });
     }
+  };
+
+  const truncateLabel = (label: string, maxLength: number) => {
+    if (label.length <= maxLength) return label;
+    return label.substring(0, maxLength) + '...';
   };
 
   return (
@@ -143,24 +176,24 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
           </div>
         </div>
       )}
-      <div className={`subLabel ${(showRecent || showPinned || currentLabel) ? 'visible' : ''}`}>
+      <div className={`subLabel ${(showRecent || showPinned || currentLabel) ? 'visible' : ''}`} ref={sidebarRef}>
         <button onClick={handleClose}>Close</button>
         {showRecent && (
           <>
             <h3>Recent Topics</h3>
             {recentTopics.map((topic) => (
               <div key={topic.requestId} className="topic">
-                <span>{topic.label}</span>
+                <span className="topic-label">{truncateLabel(topic.label, 5)}</span>
                 <span className="topic-box">{topic.topic}</span>
                 <div className="topic-menu">
-                  <span className="topic-menu-icon" onClick={() => toggleMenu(topic.requestId)}>⋮</span>
+                  <span className="topic-menu-icon" onClick={(event) => toggleMenu(event, topic.requestId)}>⋮</span>
                   {visibleMenu === topic.requestId && (
-                    <div className="topic-dropdown visible">
-                      <a href="#">Rename</a>
-                      <a href="#">Label</a>
-                      <a href="#">Pin</a>
-                      <a href="#">Archive</a>
-                      <a href="#">Delete</a>
+                    <div className="topic-dropdown visible" style={{ top: menuPosition?.top, left: menuPosition?.left }}>
+                      <a href="#"><img src="path/to/rename-icon.png" alt="Rename" />Rename</a>
+                      <a href="#"><img src="path/to/label-icon.png" alt="Label" />Label</a>
+                      <a href="#"><img src="path/to/pin-icon.png" alt="Pin" />Pin</a>
+                      <a href="#"><img src="path/to/archive-icon.png" alt="Archive" />Archive</a>
+                      <a href="#"><img src="path/to/delete-icon.png" alt="Delete" />Delete</a>
                     </div>
                   )}
                 </div>
@@ -173,17 +206,17 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
             <h3>Pinned Topics</h3>
             {pinnedTopics.map((topic) => (
               <div key={topic.requestId} className="topic">
-                <span>{topic.label}</span>
+                <span className="topic-label">{truncateLabel(topic.label, 5)}</span>
                 <span className="topic-box">{topic.topic}</span>
                 <div className="topic-menu">
-                  <span className="topic-menu-icon" onClick={() => toggleMenu(topic.requestId)}>⋮</span>
+                  <span className="topic-menu-icon" onClick={(event) => toggleMenu(event, topic.requestId)}>⋮</span>
                   {visibleMenu === topic.requestId && (
-                    <div className="topic-dropdown visible">
-                      <a href="#">Rename</a>
-                      <a href="#">Label</a>
-                      <a href="#">Pin</a>
-                      <a href="#">Archive</a>
-                      <a href="#">Delete</a>
+                    <div className="topic-dropdown visible" style={{ top: menuPosition?.top, left: menuPosition?.left }}>
+                      <a href="#"><img src="path/to/rename-icon.png" alt="Rename" />Rename</a>
+                      <a href="#"><img src="path/to/label-icon.png" alt="Label" />Label</a>
+                      <a href="#"><img src="path/to/pin-icon.png" alt="Pin" />Pin</a>
+                      <a href="#"><img src="path/to/archive-icon.png" alt="Archive" />Archive</a>
+                      <a href="#"><img src="path/to/delete-icon.png" alt="Delete" />Delete</a>
                     </div>
                   )}
                 </div>
@@ -197,17 +230,17 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
             {topics[currentLabel] &&
               topics[currentLabel].map((topic) => (
                 <div key={topic.requestId} className="topic">
-                  <span>{topic.label}</span>
+                  <span className="topic-label">{truncateLabel(topic.label, 5)}</span>
                   <span className="topic-box">{topic.topic}</span>
                   <div className="topic-menu">
-                    <span className="topic-menu-icon" onClick={() => toggleMenu(topic.requestId)}>⋮</span>
+                    <span className="topic-menu-icon" onClick={(event) => toggleMenu(event, topic.requestId)}>⋮</span>
                     {visibleMenu === topic.requestId && (
-                      <div className="topic-dropdown visible">
-                        <a href="#">Rename</a>
-                        <a href="#">Label</a>
-                        <a href="#">Pin</a>
-                        <a href="#">Archive</a>
-                        <a href="#">Delete</a>
+                      <div className="topic-dropdown visible" style={{ top: menuPosition?.top, left: menuPosition?.left }}>
+                        <a href="#"><img src="path/to/rename-icon.png" alt="Rename" />Rename</a>
+                        <a href="#"><img src="path/to/label-icon.png" alt="Label" />Label</a>
+                        <a href="#"><img src="path/to/pin-icon.png" alt="Pin" />Pin</a>
+                        <a href="#"><img src="path/to/archive-icon.png" alt="Archive" />Archive</a>
+                        <a href="#"><img src="path/to/delete-icon.png" alt="Delete" />Delete</a>
                       </div>
                     )}
                   </div>
