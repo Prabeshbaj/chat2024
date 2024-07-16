@@ -1,0 +1,112 @@
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100vw; /* Ensure the container takes the full width of the viewport */
+  }
+  
+  .mainLabel {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Ensure it stays in the flow for subLabel to position correctly */
+  }
+  
+  .subLabel {
+    width: 300px; /* Fixed width for subLabel */
+    background-color: #fff;
+    border-left: 1px solid #ddd;
+    padding: 10px;
+    overflow-y: auto;
+    position: fixed; /* Fixed position relative to the container */
+    top: 0; /* Align it to the top */
+    left: 200px; /* Position it next to the mainLabel */
+    height: 100vh; /* Full height */
+    z-index: 999; /* Ensure it is on top */
+    display: none; /* Hide initially */
+  }
+  
+  .subLabel.visible {
+    display: block; /* Show when active */
+  }
+  
+  .topic, .label, .recent, .pinned {
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+    display: flex; /* Use flex to position label and topic side by side */
+    justify-content: space-between; /* Ensure the topic box is aligned to the right */
+  }
+  
+  .topic:hover, .label:hover, .recent:hover, .pinned:hover {
+    background-color: #ddd;
+  }
+  
+  .topic-box {
+    background-color: #eee;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-left: 10px;
+  }
+  
+  .topic-menu {
+    position: relative;
+  }
+  
+  .topic-menu-icon {
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .topic-dropdown {
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    width: 150px;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .topic-dropdown.visible {
+    display: block;
+  }
+  
+  .topic-dropdown a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .topic-dropdown a:hover {
+    background-color: #f4f4f4;
+  }
+  
+  button {
+    margin-bottom: 10px;
+  }
+  
+  .hamburger {
+    font-size: 30px;
+    cursor: pointer;
+    padding: 10px;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: #f4f4f4;
+    border: none;
+    outline: none;
+    z-index: 1000; /* Ensure the hamburger is on top */
+  }
+  
+  .hamburger:hover {
+    background-color: #ddd;
+  }
+  
