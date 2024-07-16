@@ -69,42 +69,40 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
           </div>
         ))}
       </div>
-      {(showRecent || showPinned || selectedLabel) && (
-        <div className="subLabel" style={{ width: '300px', height: '100%', position: 'absolute', right: 0, top: 0 }}>
-          <button onClick={handleClose}>Close</button>
-          {showRecent && (
-            <>
-              <h3>Recent Topics</h3>
-              {recentTopics.map((topic) => (
+      <div className={`subLabel ${(showRecent || showPinned || selectedLabel) ? 'visible' : ''}`}>
+        <button onClick={handleClose}>Close</button>
+        {showRecent && (
+          <>
+            <h3>Recent Topics</h3>
+            {recentTopics.map((topic) => (
+              <div key={topic.requestId} className="topic">
+                {topic.label}: {topic.topic}
+              </div>
+            ))}
+          </>
+        )}
+        {showPinned && (
+          <>
+            <h3>Pinned Topics</h3>
+            {pinnedTopics.map((topic) => (
+              <div key={topic.requestId} className="topic">
+                {topic.label}: {topic.topic}
+              </div>
+            ))}
+          </>
+        )}
+        {selectedLabel && !showRecent && !showPinned && (
+          <>
+            <h3>{selectedLabel}</h3>
+            {topics[selectedLabel] &&
+              topics[selectedLabel].map((topic) => (
                 <div key={topic.requestId} className="topic">
-                  {topic.label}: {topic.topic}
+                  {topic.topic}
                 </div>
               ))}
-            </>
-          )}
-          {showPinned && (
-            <>
-              <h3>Pinned Topics</h3>
-              {pinnedTopics.map((topic) => (
-                <div key={topic.requestId} className="topic">
-                  {topic.label}: {topic.topic}
-                </div>
-              ))}
-            </>
-          )}
-          {selectedLabel && !showRecent && !showPinned && (
-            <>
-              <h3>{selectedLabel}</h3>
-              {topics[selectedLabel] &&
-                topics[selectedLabel].map((topic) => (
-                  <div key={topic.requestId} className="topic">
-                    {topic.topic}
-                  </div>
-                ))}
-            </>
-          )}
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
