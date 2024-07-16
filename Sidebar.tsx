@@ -20,6 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
   const [showRecent, setShowRecent] = useState(false);
   const [showPinned, setShowPinned] = useState(false);
   const [currentLabel, setCurrentLabel] = useState<string | null>(null);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   useEffect(() => {
     if (status === 'idle') {
@@ -61,24 +62,30 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
     setCurrentLabel(null);
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   return (
     <div className="container">
-      <div className="mainLabel">
-        <h2>Options</h2>
-        {status === 'loading' && <div>Loading...</div>}
-        {status === 'failed' && <div>{error}</div>}
-        <div className="recent" onClick={toggleRecent}>
-          <h3>Recent</h3>
-        </div>
-        <div className="pinned" onClick={togglePinned}>
-          <h3>Pinned</h3>
-        </div>
-        {labels.map((label) => (
-          <div key={label} className="label" onClick={() => handleLabelClick(label)}>
-            <h3>{label}</h3>
+      {isSidebarVisible && (
+        <div className="mainLabel">
+          <h2>Options</h2>
+          {status === 'loading' && <div>Loading...</div>}
+          {status === 'failed' && <div>{error}</div>}
+          <div className="recent" onClick={toggleRecent}>
+            <h3>Recent</h3>
           </div>
-        ))}
-      </div>
+          <div className="pinned" onClick={togglePinned}>
+            <h3>Pinned</h3>
+          </div>
+          {labels.map((label) => (
+            <div key={label} className="label" onClick={() => handleLabelClick(label)}>
+              <h3>{label}</h3>
+            </div>
+          ))}
+        </div>
+      )}
       <div className={`subLabel ${(showRecent || showPinned || currentLabel) ? 'visible' : ''}`}>
         <button onClick={handleClose}>Close</button>
         {showRecent && (
@@ -112,6 +119,9 @@ const Sidebar: React.FC<SidebarProps> = ({ crewId }) => {
               ))}
           </>
         )}
+      </div>
+      <div className="hamburger" onClick={toggleSidebar}>
+        &#9776; {/* Unicode for hamburger menu icon */}
       </div>
     </div>
   );

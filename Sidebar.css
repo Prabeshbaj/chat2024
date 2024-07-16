@@ -1,6 +1,8 @@
 .container {
     display: flex;
     height: 100vh;
+    width: 100vw; /* Ensure the container takes the full width of the viewport */
+    position: relative;
   }
   
   .mainLabel {
@@ -8,14 +10,21 @@
     background-color: #f4f4f4;
     padding: 10px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
   }
   
   .subLabel {
+    width: 300px; /* Fixed width for subLabel */
     background-color: #fff;
     border-left: 1px solid #ddd;
     padding: 10px;
     overflow-y: auto;
-    flex: 1; /* Ensures the subLabel div takes up the remaining space */
+    display: none; /* Hide initially */
+  }
+  
+  .subLabel.visible {
+    display: block; /* Show when active */
   }
   
   .topic {
@@ -32,5 +41,22 @@
   
   button {
     margin-bottom: 10px;
+  }
+  
+  .hamburger {
+    font-size: 30px;
+    cursor: pointer;
+    padding: 10px;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: #f4f4f4;
+    border: none;
+    outline: none;
+    z-index: 1000; /* Ensure the hamburger is on top */
+  }
+  
+  .hamburger:hover {
+    background-color: #ddd;
   }
   
