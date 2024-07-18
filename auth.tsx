@@ -1,10 +1,21 @@
-import React, { useEffect, createContext, useContext, useState } from 'react';
+import React, { useEffect, createContext, useContext, useState, ReactNode } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import axios from 'axios';
 
-const AuthContext = createContext(null);
+// Define the type for the AuthContext
+interface AuthContextType {
+  profile: any;
+}
 
-export const AuthProvider: React.FC = ({ children }) => {
+// Create the AuthContext with a default value of null
+const AuthContext = createContext<AuthContextType | null>(null);
+
+// Define the props for AuthProvider including children
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const { authState, oktaAuth } = useOktaAuth();
   const [profile, setProfile] = useState(null);
 
