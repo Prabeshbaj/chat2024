@@ -272,4 +272,14 @@ const sidebarSlice = createSlice({
         state.topics[newLabel].push({
           requestId,
           topic: state.topics[newLabel].find(topic => topic.requestId === requestId)?.topic || '',
-          label: new
+          label: newLabel,
+          isPinned: state.topics[newLabel].find(topic => topic.requestId === requestId)?.isPinned || 'False',
+          isArchived: state.topics[newLabel].find(topic => topic.requestId === requestId)?.isArchived || 'False',
+        });
+      });
+  },
+});
+
+export const { setCrewId, setEmail, selectLabel, deselectLabel } = sidebarSlice.actions;
+
+export default sidebarSlice.reducer;
