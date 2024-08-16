@@ -1,16 +1,25 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import json
-from your_module import invoke_sm_azure_endpoint  # Replace 'your_module' with the actual module name
+
+# Mock the entire boto3 module
+mock_boto3 = MagicMock()
+mock_client = MagicMock()
+mock_boto3.client.return_value = mock_client
+
+# Apply the mock before importing your module
+with patch.dict('sys.modules', {'boto3': mock_boto3}):
+    from your_module import invoke_sm_azure_endpoint  # Replace 'your_module' with the actual module name
 
 class TestInvokeSMAzureEndpoint(unittest.TestCase):
 
-    @patch('boto3.client')
-    def test_invoke_sm_azure_endpoint(self, mock_boto3_client):
+    def setUp(self):
+        # Reset the mock before each test
+        mock_boto3.reset_mock()
+        mock_client.reset_mock()
+
+    def test_invoke_sm_azure_endpoint(self):
         # Arrange
-        mock_client = MagicMock()
-        mock_boto3_client.return_value = mock_client
-        
         mock_response = {
             'ResponseMetadata': {'HTTPStatusCode': 200},
             'Body': MagicMock()
@@ -24,7 +33,7 @@ class TestInvokeSMAzureEndpoint(unittest.TestCase):
         result = invoke_sm_azure_endpoint(test_payload)
 
         # Assert
-        mock_boto3_client.assert_called_once_with('runtime.sagemaker', region_name='us-east-1')
+        mock_boto3.client.assert_called_once_with('runtime.sagemaker', region_name='us-east-1')
         mock_client.invoke_endpoint.assert_called_once_with(
             EndpointName='abc',
             ContentType='application/json',
