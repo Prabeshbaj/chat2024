@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  useTable,
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-} from '@tanstack/react-table';
+import { createColumnHelper, useReactTable, getCoreRowModel } from '@tanstack/react-table';
 
 // Define your data type based on the JSON structure
 type UserProfile = {
@@ -15,33 +10,30 @@ type UserProfile = {
   CreatedOn: string;
 };
 
+const columnHelper = createColumnHelper<UserProfile>();
+
 const UserProfileTable: React.FC<{ data: UserProfile[] }> = ({ data }) => {
   // Define the columns
-  const columns: ColumnDef<UserProfile>[] = [
-    {
+  const columns = [
+    columnHelper.accessor('CrewId', {
       header: 'Crew ID',
-      accessorKey: 'CrewId',
-    },
-    {
+    }),
+    columnHelper.accessor('Firstname', {
       header: 'First Name',
-      accessorKey: 'Firstname',
-    },
-    {
+    }),
+    columnHelper.accessor('Lastname', {
       header: 'Last Name',
-      accessorKey: 'Lastname',
-    },
-    {
+    }),
+    columnHelper.accessor('Email', {
       header: 'Email',
-      accessorKey: 'Email',
-    },
-    {
+    }),
+    columnHelper.accessor('CreatedOn', {
       header: 'Created On',
-      accessorKey: 'CreatedOn',
-    },
+    }),
   ];
 
   // Create the table instance
-  const table = useTable({
+  const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -54,10 +46,7 @@ const UserProfileTable: React.FC<{ data: UserProfile[] }> = ({ data }) => {
           <tr key={headerGroup.id}>
             {headerGroup.headers.map(header => (
               <th key={header.id}>
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext()
-                )}
+                {header.isPlaceholder ? null : header.column.columnDef.header}
               </th>
             ))}
           </tr>
@@ -68,7 +57,7 @@ const UserProfileTable: React.FC<{ data: UserProfile[] }> = ({ data }) => {
           <tr key={row.id}>
             {row.getVisibleCells().map(cell => (
               <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                {cell.getValue()}
               </td>
             ))}
           </tr>
