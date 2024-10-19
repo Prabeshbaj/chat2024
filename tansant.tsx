@@ -1,5 +1,5 @@
 import React from 'react';
-import { createColumnHelper, useReactTable, getCoreRowModel } from '@tanstack/react-table';
+import { useReactTable, createColumnHelper, getCoreRowModel, ColumnDef } from '@tanstack/react-table';
 
 // Define your data type based on the JSON structure
 type UserProfile = {
@@ -13,8 +13,8 @@ type UserProfile = {
 const columnHelper = createColumnHelper<UserProfile>();
 
 const UserProfileTable: React.FC<{ data: UserProfile[] }> = ({ data }) => {
-  // Define the columns
-  const columns = [
+  // Define the columns with proper typing for each
+  const columns: ColumnDef<UserProfile>[] = [
     columnHelper.accessor('CrewId', {
       header: 'Crew ID',
     }),
